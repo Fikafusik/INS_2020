@@ -8,6 +8,7 @@ from keras.layers import Dense, Dropout, Flatten
 from keras.layers import Conv2D, MaxPooling2D
 
 from matplotlib import pyplot as plotter
+from sklearn.preprocessing import LabelEncoder
 from sklearn.utils import shuffle
 
 
@@ -15,9 +16,9 @@ def gen_data(size=500, img_size=50):
     c1 = size // 2
     c2 = size - c1
 
-    label_c1 = np.full([c1, 1], 0) # 0 means Square
+    label_c1 = np.full([c1, 1], 'Square') # 0 means Square
     data_c1 = np.array([gens.gen_rect(img_size) for i in range(c1)])
-    label_c2 = np.full([c2, 1], 1) # 1 means Circle
+    label_c2 = np.full([c2, 1], 'Circle') # 1 means Circle
     data_c2 = np.array([gens.gen_empty_circle(img_size) for i in range(c2)])
 
     data = np.vstack((data_c1, data_c2))
@@ -34,6 +35,10 @@ train_data, train_target = shuffle(train_data, train_target)
 
 train_data = train_data.reshape([-1, 50, 50, 1])
 test_data = test_data.reshape([-1, 50, 50, 1])
+
+encoder = LabelEncoder()
+train_target = encoder.fit_transform(train_target)
+test_target = encoder.fit_transform(test_target)
 
 train_target = keras.utils.to_categorical(train_target, 2)
 test_target = keras.utils.to_categorical(test_target, 2)
